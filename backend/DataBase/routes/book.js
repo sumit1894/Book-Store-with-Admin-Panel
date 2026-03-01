@@ -28,7 +28,6 @@ router.post("/add-book", authenticateToken, async (req, res) => {
     }
 })
 
-
 //todo update book
 router.put("/update-book", authenticateToken, async (req, res) => {
     try {
@@ -60,17 +59,6 @@ router.delete("/delete-book", authenticateToken, async (req, res) => {
 })
 
 //todo get all books
-// router.get("/get-all-books", authenticateToken, async (req, res) => {
-//     try {
-//         const books = await Book.find().sort({ createAt: -1 });
-//         return res.json({
-//             status: "Success",
-//             data: books,
-//         })
-//     } catch (error) {
-//         res.status(500).json({ message: "An error occurred" });
-//     }
-// })
 router.get("/get-all-books", async (req, res) => {
     try {
         const books = await Book.find().sort({ createAt: -1 });
@@ -95,17 +83,6 @@ router.get("/get-recent-books", async (req, res) => {
         res.status(500).json({ message: "An error occurred" });
     }
 })
-// router.get("/get-recent-books", authenticateToken, async (req, res) => {
-//     try {
-//         const books = await Book.find().sort({ createAt: -1 }).limit(4);
-//         return res.json({
-//             status: "Success",
-//             data: books,
-//         })
-//     } catch (error) {
-//         res.status(500).json({ message: "An error occurred" });
-//     }
-// })
 
 //todo get book by id
 router.get("/get-book-by-id/:id",async(req,res)=>{

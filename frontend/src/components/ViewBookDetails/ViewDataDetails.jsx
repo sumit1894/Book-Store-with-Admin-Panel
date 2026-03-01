@@ -1,18 +1,20 @@
 import { React, useEffect, useState } from "react";
 import axios from "axios"
 import { Loader } from "../Loader/Loader";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { GrLanguage } from "react-icons/gr";
 import { FaHeart } from "react-icons/fa";
 import { FaShoppingCart } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { MdOutlineDeleteOutline } from "react-icons/md";
+import { Link } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
 
 
 
 export const ViewDataDetails = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [Data, setData] = useState(null);
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
     const role = useSelector((state) => state.auth.role);
@@ -25,7 +27,30 @@ export const ViewDataDetails = () => {
             setData(response.data.data);
         };
         fetch();
-    }, [id]);
+    }, []);
+
+    const headers = {
+        id: localStorage.getItem("id"),
+        authorization: `Bearer ${localStorage.getItem("token")}`,
+        Bookid: id
+    };
+
+    const handleFavourite = async () => {
+        const response = await axios.put("http://localhost:3000/api/v1/add-book-to-favourite", {}, { headers });
+        alert(response.data.messages);
+    }
+
+    const handleCart = async () => {
+        const response = await axios.put("http://localhost:3000/api/v1/add-to-cart", {}, { headers });
+        alert(response.data.messages);
+    }
+
+    const deleteBook = async () => {
+        const res = await axios.delete("http://localhost:3000/api/v1/delete-book", { headers });
+        alert(res.data.message)
+        navigate("/all-books")
+    }
+
 
     return (
         <>
@@ -41,20 +66,33 @@ export const ViewDataDetails = () => {
                                 alt={Data.title}
                                 className=" h-[50vh] md:h-[60vh] lg:h-[70vh] rounded "
                             />
-                            {isLoggedIn == true && role === "user" && (
-                                <div className="flex flex-col  md:flex-row lg:flex-col items-center justify-between lg:justify-start  mt-8 lg:mt-0">
+                            {isLoggedIn && role === "user" && (
+                                <div className="flex flex-col md:flex-row lg:flex-col items-center justify-between lg:justify-start mt-8 lg:mt-0">
 
-                                    <button className="bg-white rounded lg:rounded-full text-3xl p-3  text-red-500 flex justify-center items-center"><FaHeart /><span className="ms-4 block lg:hidden">Favourites</span>  </button>
+                                    <button
+                                        onClick={handleFavourite}
+                                        className="bg-white rounded lg:rounded-full text-3xl p-3 text-red-500 flex justify-center items-center"
+                                    >
+                                        <FaHeart />
+                                        <span className="ms-4 block lg:hidden">Favourite</span>
+                                    </button>
 
-                                    <button className="text-white rounded lg:rounded-full text-3xl p-3 mt-8  md:mt-0 lg:mt-8 bg-blue-500 flex justify-center items-center"><FaShoppingCart /><span className="ms-4 block lg:hidden ">Add to Card</span></button>
+                                    <button
+                                        onClick={handleCart}
+                                        className="text-white rounded lg:rounded-full text-3xl p-3 mt-8 md:mt-0 lg:mt-8 bg-blue-500 flex justify-center items-center"
+                                    >
+                                        <FaShoppingCart />
+                                        <span className="ms-4 block lg:hidden">Add to Cart</span>
+                                    </button>
+
                                 </div>
                             )}
                             {isLoggedIn == true && role === "admin" && (
                                 <div className="flex flex-col  md:flex-row lg:flex-col items-center justify-between lg:justify-start  mt-8 lg:mt-0">
 
-                                    <button className="bg-white rounded lg:rounded-full text-3xl p-3   flex justify-center items-center"><FaEdit /><span className="ms-4 block lg:hidden">Edit</span>  </button>
+                                    <Link to={`/updatebook/${id}`}  className="bg-white rounded lg:rounded-full text-3xl p-3   flex justify-center items-center"><FaEdit /><span className="ms-4 block lg:hidden">Edit</span>  </Link>
 
-                                    <button className="text-red-500 rounded lg:rounded-full text-3xl p-3 mt- md:mt-08lg:mt-8 bg-white flex justify-center items-center"><MdOutlineDeleteOutline /><span className="ms-4 block lg:hidden">Delete Book</span></button>
+                                    <button className="text-red-500 rounded lg:rounded-full text-3xl p-3 mt- md:mt-08lg:mt-8 bg-white flex justify-center items-center" onClick={deleteBook}><MdOutlineDeleteOutline /><span className="ms-4 block lg:hidden">Delete Book</span></button>
                                 </div>
                             )}
                         </div>

@@ -70,7 +70,6 @@ export const LogIn = () => {
           </div>
 
 
-
           {/* Password */}
           <div>
             <label className="block text-zinc-400 mb-1">Password</label>

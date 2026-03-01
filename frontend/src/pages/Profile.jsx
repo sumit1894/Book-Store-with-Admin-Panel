@@ -3,6 +3,7 @@ import { Slidebar } from "../components/Profile/Slidebar";
 import { Outlet } from "react-router-dom"
 import axios from "axios"
 import { Loader } from "../components/Loader/Loader";
+import { MobileNav } from "../components/Profile/MobileNav";
 
 export const Profile = () => {
     const [Profile, setProfile] = useState();
@@ -26,6 +27,7 @@ export const Profile = () => {
             {Profile && <>
                 <div className=" w-full md:w-1/6">
                     <Slidebar data={Profile} />
+                    <MobileNav/>
                 </div>
                 <div className="w-full md:w-5/6">
                     <Outlet />
